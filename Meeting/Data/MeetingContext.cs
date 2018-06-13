@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Meeting.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Meeting.Data
 {
@@ -10,9 +7,11 @@ namespace Meeting.Data
     {
         public MeetingContext(DbContextOptions<MeetingContext> options) : base(options) { }
 
+        public DbSet<TeacherStudentMeeting> Meetings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<TeacherStudentMeeting>().ToTable("TeacherStudentMeeting");
         }
     }
 }
