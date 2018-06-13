@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,7 +20,47 @@ namespace Meeting.Controllers
             _context = context;
         }
 
+        #region Create
+        [HttpPost(Name = "CreateNewMeeting")]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> CreateNewMeeting()
+        {
+            var meeting = new TeacherStudentMeeting
+            {
+                AcceptedByTeacher = false,
+                Duration = 120,
+                MeetingDate = new DateTime(2018, 06, 13),
+                StudentID = 1,
+                TeacherID = 2,
+                TotalCost = 40
+            };
+
+            await _context.Meetings.AddAsync(meeting);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(CreateNewMeeting), new { id = meeting.Id }, null);
+        }
+        #endregion
+
         #region Read
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(TeacherStudentMeeting), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMeetingByID(int id)
+        {
+            if (id < 0)
+                return BadRequest();
+
+            var meeting = await _context.Meetings.SingleOrDefaultAsync(t => t.Id == id);
+
+            if (meeting == null)
+                return NotFound();
+
+            return Ok(Json(meeting));
+        }
+
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

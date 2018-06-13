@@ -20,6 +20,8 @@ namespace Meeting.Models
 
         public double TotalCost { get; set; }
 
+        //Currency must be added
+
         public TeacherStudentMeeting() { }
     }
 }

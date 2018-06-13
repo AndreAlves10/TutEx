@@ -27,6 +27,8 @@ namespace Catalog.Models
         public string TeachingAreas { get; set; }
 
         public double PricePerHour { get; set; }
+
+        public double Rating { get; set; }
         #endregion
 
         public Teacher() { }

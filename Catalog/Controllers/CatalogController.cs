@@ -21,7 +21,7 @@ namespace Catalog.Controllers
         }
 
         #region Create
-        [HttpPost(Name = "CreateNewTeacher")]//Should be HttpPut?
+        [HttpPost(Name = "CreateNewTeacher")]
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateNewTeacher()
