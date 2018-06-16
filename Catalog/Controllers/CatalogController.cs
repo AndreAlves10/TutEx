@@ -56,7 +56,7 @@ namespace Catalog.Controllers
             if (teachers == null)
                 return NotFound();
 
-            return Ok(Json(teachers));
+            return Json(Ok(teachers));
         }
  
         [HttpGet]
@@ -73,7 +73,7 @@ namespace Catalog.Controllers
             if (teacher == null)
                 return NotFound();
 
-            return Ok(Json(teacher));
+            return Json(Ok(teacher));
         }
 
         [HttpGet]
@@ -87,7 +87,7 @@ namespace Catalog.Controllers
             if (teacherSpokenLanguages == null)
                 return NotFound();
 
-            return Ok(Json(teacherSpokenLanguages));
+            return Json(Ok(teacherSpokenLanguages));
         }
 
         [HttpGet]
@@ -104,7 +104,7 @@ namespace Catalog.Controllers
             if (teacherSpokenLanguages == null)
                 return NotFound();
 
-            return Ok(Json(teacherSpokenLanguages));
+            return Json(Ok(teacherSpokenLanguages));
         }
 
         #endregion
@@ -130,17 +130,5 @@ namespace Catalog.Controllers
             return NoContent();
         }
         #endregion
-
-        // POST: api/Catalog
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-        
-        // PUT: api/Catalog/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
     }
 }

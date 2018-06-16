@@ -58,7 +58,7 @@ namespace Meeting.Controllers
             if (meeting == null)
                 return NotFound();
 
-            return Ok(Json(meeting));
+            return Json(Ok(meeting));
         }
 
         [HttpGet]
@@ -72,7 +72,7 @@ namespace Meeting.Controllers
             if (meetings == null)
                 return NotFound();
 
-            return Ok(Json(meetings));
+            return Json(Ok(meetings));
         }
 
         [HttpGet]
@@ -89,7 +89,7 @@ namespace Meeting.Controllers
             if (studentMeetings == null)
                 return NotFound();
 
-            return Ok(Json(studentMeetings));
+            return Json(Ok(studentMeetings));
         }
 
         [HttpGet]
@@ -106,7 +106,7 @@ namespace Meeting.Controllers
             if (teacherMeetings == null)
                 return NotFound();
 
-            return Ok(Json(teacherMeetings));
+            return Json(Ok(teacherMeetings));
         }
         #endregion
 
@@ -127,17 +127,5 @@ namespace Meeting.Controllers
             return NoContent();
         }
         #endregion
-
-        // PUT: api/Meeting/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
