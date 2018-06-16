@@ -1,11 +1,11 @@
 ﻿using System;
-using Meeting.Data;
+using Messaging.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Meeting
+namespace Messaging
 {
     public class Program
     {
@@ -18,7 +18,7 @@ namespace Meeting
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<MeetingContext>();
+                    var context = services.GetRequiredService<MessagingContext>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
