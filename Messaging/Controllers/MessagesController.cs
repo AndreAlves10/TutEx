@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -99,7 +97,10 @@ namespace Messaging.Controllers
         }
 
         // DELETE: api/Messages/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteMessage([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -114,7 +115,7 @@ namespace Messaging.Controllers
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
 
-            return Ok(message);
+            return Json(Ok(message));
         }
 
         private bool MessageExists(int id)
