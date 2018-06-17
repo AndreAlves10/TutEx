@@ -17,7 +17,7 @@ namespace Catalog.Controllers
 
         public CatalogController(CatalogContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         #region Create

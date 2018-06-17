@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Messaging.Data;
 using Messaging.Models;
 using System.Net;
+using System;
 
 namespace Messaging.Controllers
 {
@@ -16,7 +17,7 @@ namespace Messaging.Controllers
 
         public MessagesController(MessagingContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         // GET: api/Messages

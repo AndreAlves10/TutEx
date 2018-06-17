@@ -17,7 +17,7 @@ namespace Meeting.Controllers
 
         public MeetingController(MeetingContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         #region Create
