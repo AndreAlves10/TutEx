@@ -84,6 +84,7 @@ namespace General.Controllers
 
         #region Update
         // PUT: api/UserPreferences/5
+        [HttpPut]
         [Route("PutUserPreferences/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> PutUserPreferences([FromRoute] int id, [FromBody] UserPreferences userPreferences)

@@ -21,10 +21,10 @@ namespace Catalog.Controllers
         }
 
         #region Create
-        [HttpPost(Name = "CreateNewTeacher")]
+        [HttpPost]//TODO
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateNewTeacher()
+        public async Task<IActionResult> CreateNewTeacher([FromBody]Teacher newTeacher)
         {
             var teacher = new Teacher
             {

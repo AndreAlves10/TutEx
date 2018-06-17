@@ -21,10 +21,10 @@ namespace Meeting.Controllers
         }
 
         #region Create
-        [HttpPost(Name = "CreateNewMeeting")]
+        [HttpPost]
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateNewMeeting()
+        public async Task<IActionResult> CreateNewMeeting([FromBody] TeacherStudentMeeting newMeeting)
         {
             var meeting = new TeacherStudentMeeting
             {
@@ -119,6 +119,7 @@ namespace Meeting.Controllers
         #endregion
 
         #region Delete
+        [HttpDelete]
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteMeeting(int id)

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Identity.Data;
 using Identity.Models;
 using Identity.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Identity
 {
@@ -70,6 +71,11 @@ namespace Identity
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My Identity", Version = "v1" });//TODO: Dynamically get version
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,6 +101,13 @@ namespace Identity
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Identity V1");//TODO: Dynamically get version
             });
         }
     }
