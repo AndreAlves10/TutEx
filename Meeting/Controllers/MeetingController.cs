@@ -37,7 +37,15 @@ namespace Meeting.Controllers
             };
 
             await _context.Meetings.AddAsync(meeting);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
 
             return CreatedAtAction(nameof(CreateNewMeeting), new { id = meeting.Id }, null);
         }
@@ -122,7 +130,14 @@ namespace Meeting.Controllers
 
             _context.Meetings.Remove(meeting);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
 
             return NoContent();
         }

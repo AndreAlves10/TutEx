@@ -6,18 +6,8 @@ using System.Threading.Tasks;
 
 namespace General.Models
 {
-    public sealed class UserPreferences
+    public class UserPreferences
     {
-        static readonly UserPreferences _instance = new UserPreferences();
-
-        public static UserPreferences Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
-
         [Key]
         public int UserID { get; set; }
 
@@ -25,6 +15,6 @@ namespace General.Models
 
         public string Currency { get; set; } = "Euro";
 
-        private UserPreferences() { }
+        public UserPreferences() { }
     }
 }

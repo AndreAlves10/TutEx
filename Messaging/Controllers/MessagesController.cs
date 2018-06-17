@@ -32,7 +32,7 @@ namespace Messaging.Controllers
             if (messages == null)
                 return NotFound();
 
-            return Json(Ok(_context.Messages));
+            return Json(Ok(messages));
         }
 
         // GET: api/Messages/5
@@ -92,7 +92,15 @@ namespace Messaging.Controllers
                 return BadRequest(ModelState);
 
             _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                    throw;
+            }
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
@@ -114,7 +122,15 @@ namespace Messaging.Controllers
             
 
             _context.Messages.Remove(message);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
 
             return Json(Ok(message));
         }

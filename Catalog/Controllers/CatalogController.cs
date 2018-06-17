@@ -38,7 +38,15 @@ namespace Catalog.Controllers
             };
 
             await _context.Teachers.AddAsync(teacher);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
 
             return CreatedAtAction(nameof(GetTeacherByID), new { id = teacher.Id }, null);
         }
@@ -125,7 +133,14 @@ namespace Catalog.Controllers
 
             _context.Teachers.Remove(teacher);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
 
             return NoContent();
         }
