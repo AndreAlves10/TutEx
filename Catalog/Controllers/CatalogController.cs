@@ -3,9 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Catalog.Data;
+using Catalog.Logging;
 using Catalog.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Catalog.Controllers
 {
@@ -14,10 +16,12 @@ namespace Catalog.Controllers
     public class CatalogController : Controller
     {
         private readonly CatalogContext _context;
+        private readonly ILogger _logger;
 
-        public CatalogController(CatalogContext context)
+        public CatalogController(CatalogContext context, ILogger<CatalogController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger;
         }
 
         #region Create
@@ -59,11 +63,17 @@ namespace Catalog.Controllers
         [ProducesResponseType(typeof(Teacher), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTeachers()
         {
+            _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() method Started");
+
             var teachers = await _context.Teachers.ToListAsync();
 
             if (teachers == null)
+            {
+                _logger.LogError(LoggingEvents.GetTeachersNotFound, "GetTeachers() NOT FOUND any teachers");
                 return NotFound();
+            }
 
+            _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() Ended with success");
             return Json(Ok(teachers));
         }
  
