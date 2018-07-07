@@ -103,12 +103,14 @@ namespace Identity
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            #region
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Identity V1");//TODO: Dynamically get version
             });
+            #endregion
         }
     }
 }

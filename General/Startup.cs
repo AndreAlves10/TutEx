@@ -53,12 +53,14 @@ namespace General
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            #region Swagger
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My General V1");//TODO: Dynamically get version
             });
+            #endregion
         }
     }
 }

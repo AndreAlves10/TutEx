@@ -63,7 +63,7 @@ namespace Catalog.Controllers
         [ProducesResponseType(typeof(Teacher), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTeachers()
         {
-            _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() method Started");
+            _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() method Started");//This library cannot write to files
 
             var teachers = await _context.Teachers.ToListAsync();
 

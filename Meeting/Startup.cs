@@ -59,12 +59,14 @@ namespace Meeting
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            #region
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Meeting V1");//TODO: Get version dynamically
             });
+            #endregion
         }
     }
 }

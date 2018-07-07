@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Catalog.Data;
+﻿using Catalog.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -57,12 +53,14 @@ namespace Catalog
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            #region Swager
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Catalog V1");//TODO: Dynamically get version
             });
+            #endregion
         }
     }
 }
