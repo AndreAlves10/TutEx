@@ -22,7 +22,7 @@ namespace Meeting.Controllers
 
         #region Create
         [HttpPost]
-        [Route("[action]")]
+        [Route("meeting")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateNewMeeting([FromBody] TeacherStudentMeeting newMeeting)
         {
@@ -36,24 +36,23 @@ namespace Meeting.Controllers
                 TotalCost = 40
             };
 
-            await _context.Meetings.AddAsync(meeting);
-
             try
             {
+                //await _context.Meetings.AddAsync(newMeeting);
+                await _context.Meetings.AddAsync(meeting);
                 await _context.SaveChangesAsync();
+                return CreatedAtAction(nameof(CreateNewMeeting), new { id = meeting.Id }, null);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
-
-            return CreatedAtAction(nameof(CreateNewMeeting), new { id = meeting.Id }, null);
         }
         #endregion
 
         #region Read
         [HttpGet]
-        [Route("[action]")]
+        [Route("meeting/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(TeacherStudentMeeting), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMeetingByID(int id)
@@ -61,30 +60,45 @@ namespace Meeting.Controllers
             if (id < 0)
                 return BadRequest();
 
-            var meeting = await _context.Meetings.SingleOrDefaultAsync(t => t.Id == id);
+            try
+            {
+                var meeting = await _context.Meetings.SingleOrDefaultAsync(t => t.Id == id);
 
-            if (meeting == null)
-                return NotFound();
+                if (meeting == null)
+                    return NotFound();
 
-            return Json(Ok(meeting));
+                return Json(Ok(meeting));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpGet]
-        [Route("[action]")]
+        [Route("meeting")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(TeacherStudentMeeting), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMeetings()
         {
-            var meetings = await _context.Meetings.ToListAsync();
+            try
+            {
+                var meetings = await _context.Meetings.ToListAsync();
 
-            if (meetings == null)
-                return NotFound();
+                if (meetings == null)
+                    return NotFound();
 
-            return Json(Ok(meetings));
+                return Json(Ok(meetings));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
-        [Route("[action]")]
+        [Route("meeting/student/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(TeacherStudentMeeting), (int)HttpStatusCode.OK)]
         public IActionResult GetMeetingsByStudentID(int id)
@@ -92,16 +106,23 @@ namespace Meeting.Controllers
             if (id < 0)
                 return BadRequest();
 
-            var studentMeetings = _context.Meetings.Where(elem => elem.StudentID == id).ToList();
+            try
+            {
+                var studentMeetings = _context.Meetings.Where(elem => elem.StudentID == id).ToList();
 
-            if (studentMeetings == null)
-                return NotFound();
+                if (studentMeetings == null)
+                    return NotFound();
 
-            return Json(Ok(studentMeetings));
+                return Json(Ok(studentMeetings));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
-        [Route("[action]")]
+        [Route("meeting/teacher/id")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(TeacherStudentMeeting), (int)HttpStatusCode.OK)]
         public IActionResult GetMeetingsByTeacherID(int id)
@@ -109,38 +130,45 @@ namespace Meeting.Controllers
             if (id < 0)
                 return BadRequest();
 
-            var teacherMeetings = _context.Meetings.Where(elem => elem.TeacherID == id).ToList();
+            try
+            {
+                var teacherMeetings = _context.Meetings.Where(elem => elem.TeacherID == id).ToList();
 
-            if (teacherMeetings == null)
-                return NotFound();
+                if (teacherMeetings == null)
+                    return NotFound();
 
-            return Json(Ok(teacherMeetings));
+                return Json(Ok(teacherMeetings));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
         #endregion
 
         #region Delete
         [HttpDelete]
-        [Route("[action]")]
+        [Route("meeting/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteMeeting(int id)
         {
-            var meeting = _context.Meetings.SingleOrDefault(t => t.Id == id);
-
-            if (meeting == null)
-                return NotFound();
-
-            _context.Meetings.Remove(meeting);
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
+                var meeting = _context.Meetings.SingleOrDefault(t => t.Id == id);
 
-            return NoContent();
+                if (meeting == null)
+                    return NotFound();
+
+                _context.Meetings.Remove(meeting);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         #endregion
     }

@@ -25,120 +25,128 @@ namespace General.Controllers
         #region Create
         // POST: api/UserPreferences
         [HttpPost]
+        [Route("users")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> PostUserPreferences([FromBody] UserPreferences userPreferences)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            _context.UserPreference.Add(userPreferences);
-
             try
             {
+                _context.UserPreference.Add(userPreferences);
                 await _context.SaveChangesAsync();
+                return CreatedAtAction("GetUserPreferences", new { id = userPreferences.UserID }, userPreferences);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex);
             }
-
-            return CreatedAtAction("GetUserPreferences", new { id = userPreferences.UserID }, userPreferences);
         }
         #endregion
 
         #region Read
-        // GET: api/UserPreferences
+        // GET: api/users
         [HttpGet]
-        [Route("[action]")]
+        [Route("users")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UserPreferences), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUserPreference()
         {
-            var userPreferences = await _context.UserPreference.ToListAsync();
+            try
+            {
+                var userPreferences = await _context.UserPreference.ToListAsync();
 
-            if (userPreferences == null)
-                return NotFound();
+                if (userPreferences == null)
+                    return NotFound();
 
-            return Json(Ok(userPreferences));
+                return Json(Ok(userPreferences));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         // GET: api/UserPreferences/5
         [HttpGet]
-        [Route("[action]")]
+        [Route("users/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UserPreferences), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUserPreferences([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            try
+            {
+                var userPreferences = await _context.UserPreference.SingleOrDefaultAsync(m => m.UserID == id);
+
+                if (userPreferences == null)
+                    return NotFound();
+
+                return Json(Ok(userPreferences));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             
-
-            var userPreferences = await _context.UserPreference.SingleOrDefaultAsync(m => m.UserID == id);
-
-            if (userPreferences == null)
-                return NotFound();
-            
-
-            return Json(Ok(userPreferences));
         }
         #endregion
 
         #region Update
-        // PUT: api/UserPreferences/5
+        // PUT: api/users/5
         [HttpPut]
-        [Route("PutUserPreferences/{id}")]
+        [Route("users/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> PutUserPreferences([FromRoute] int id, [FromBody] UserPreferences userPreferences)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            if (id != userPreferences.UserID)
-                return BadRequest();
-            
-            _context.Entry(userPreferences).State = EntityState.Modified;
-
             try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
             {
                 if (!UserPreferencesExists(id))
                     return NotFound();
-                else
-                    throw;
-                
-            }
 
-            return NoContent();
+                if (id != userPreferences.UserID)
+                    return BadRequest();
+            
+                _context.Entry(userPreferences).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         #endregion
 
         #region Delete
         // DELETE: api/UserPreferences/5
-        [HttpDelete("{id}")]
+        [Route("users/{id}")]
         public async Task<IActionResult> DeleteUserPreferences([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-
-            var userPreferences = await _context.UserPreference.SingleOrDefaultAsync(m => m.UserID == id);
-            if (userPreferences == null)
-                return NotFound();
-            
-            _context.UserPreference.Remove(userPreferences);
 
             try
             {
+                var userPreferences = await _context.UserPreference.SingleOrDefaultAsync(m => m.UserID == id);
+                if (userPreferences == null)
+                    return NotFound();
+            
+                _context.UserPreference.Remove(userPreferences);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                    throw;
-            }
 
-            return Json(Ok(userPreferences));
+                return Json(Ok(userPreferences));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            } 
         }
         #endregion
 

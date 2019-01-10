@@ -22,117 +22,125 @@ namespace Messaging.Controllers
 
         // GET: api/Messages
         [HttpGet]
-        [Route("[action]")]
+        [Route("messages")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMessages()
         {
-            var messages = await _context.Messages.ToListAsync();
+            try
+            {
+                var messages = await _context.Messages.ToListAsync();
 
-            if (messages == null)
-                return NotFound();
+                if (messages == null)
+                    return NotFound();
 
-            return Json(Ok(messages));
+                return Json(Ok(messages));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            } 
         }
 
         // GET: api/Messages/5
         [HttpGet]
-        [Route("[action]")]
+        [Route("messages/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMessage([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            var message = await _context.Messages.SingleOrDefaultAsync(m => m.Id == id);
 
-            if (message == null)
-                return NotFound();
+            try
+            {
+                var message = await _context.Messages.SingleOrDefaultAsync(m => m.Id == id);
+
+                if (message == null)
+                    return NotFound();
+
+                return Json(Ok(message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             
-            return Json(Ok(message));
         }
 
         // PUT: api/Messages/5
-        [HttpPut("{id}")]
+        [HttpPut("message/{id}")]
         public async Task<IActionResult> PutMessage([FromRoute] int id, [FromBody] Message message)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-
-            if (id != message.Id)
-                return BadRequest();
-            
-
-            _context.Entry(message).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
                 if (!MessageExists(id))
                     return NotFound();
-                else
-                    throw;
-            }
 
-            return NoContent();
+                if (id != message.Id)
+                    return BadRequest();
+            
+                _context.Entry(message).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Messages
         [HttpPost]
-        [Route("[action]")]
+        [Route("message")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> PostMessage([FromBody] Message message)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _context.Messages.Add(message);
-
             try
             {
+                _context.Messages.Add(message);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                    throw;
-            }
 
-            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+                return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Messages/5
         [HttpDelete]
-        [Route("[action]")]
+        [Route("message/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteMessage([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-
-            var message = await _context.Messages.SingleOrDefaultAsync(m => m.Id == id);
-            if (message == null)
-                return NotFound();
-            
-
-            _context.Messages.Remove(message);
 
             try
             {
+                var message = await _context.Messages.SingleOrDefaultAsync(m => m.Id == id);
+                if (message == null)
+                    return NotFound();
+            
+                _context.Messages.Remove(message);
                 await _context.SaveChangesAsync();
+
+                return Json(Ok(message));
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
-
-            return Json(Ok(message));
         }
 
         private bool MessageExists(int id)

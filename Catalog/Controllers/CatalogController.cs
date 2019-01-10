@@ -27,10 +27,13 @@ namespace Catalog.Controllers
 
         #region Create
         [HttpPost]//TODO
-        [Route("[action]")]
+        [Route("teachers")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateNewTeacher([FromBody]Teacher newTeacher)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var teacher = new Teacher
             {
                 Name = "Test",
@@ -42,15 +45,15 @@ namespace Catalog.Controllers
                 TeachingAreas = "Math, History"
             };
 
-            await _context.Teachers.AddAsync(teacher);
-
             try
             {
+                //await _context.Teachers.AddAsync(newTeacher);
+                await _context.Teachers.AddAsync(teacher);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
 
             return CreatedAtAction(nameof(GetTeacherByID), new { id = teacher.Id }, null);
@@ -66,16 +69,24 @@ namespace Catalog.Controllers
         {
             _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() method Started");//This library cannot write to files
 
-            var teachers = await _context.Teachers.ToListAsync();
-
-            if (teachers == null)
+            try
             {
-                _logger.LogError(LoggingEvents.GetTeachersNotFound, "GetTeachers() NOT FOUND any teachers");
-                return NotFound();
-            }
+                var teachers = await _context.Teachers.ToListAsync();
 
-            _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() Ended with success");
-            return Json(Ok(teachers));
+                if (teachers == null)
+                {
+                    _logger.LogError(LoggingEvents.GetTeachersNotFound, "GetTeachers() NOT FOUND any teachers");
+                    return NotFound();
+                }
+
+                _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() Ended with success");
+                return Json(Ok(teachers));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(LoggingEvents.GetTeachers, "GetTeachers() BadRequest " + ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
  
         [HttpGet]
@@ -87,12 +98,19 @@ namespace Catalog.Controllers
             if (id < 0)
                 return BadRequest();
 
-            var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.Id == id);
+            try
+            {
+                var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.Id == id);
 
-            if (teacher == null)
-                return NotFound();
+                if (teacher == null)
+                    return NotFound();
 
-            return Json(Ok(teacher));
+                return Json(Ok(teacher));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -101,12 +119,20 @@ namespace Catalog.Controllers
         [ProducesResponseType(typeof(Teacher), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTeachersSpokenLanguages()
         {
-            var teacherSpokenLanguages = await _context.TeacherSpokenLanguages.ToListAsync();
+            try
+            {
+                var teacherSpokenLanguages = await _context.TeacherSpokenLanguages.ToListAsync();
 
-            if (teacherSpokenLanguages == null)
-                return NotFound();
+                if (teacherSpokenLanguages == null)
+                    return NotFound();
 
-            return Json(Ok(teacherSpokenLanguages));
+                return Json(Ok(teacherSpokenLanguages));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpGet]
@@ -115,15 +141,23 @@ namespace Catalog.Controllers
         [ProducesResponseType(typeof(Teacher), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTeacherSpokenLanguages(int id)
         {
-            if (id < 0)
-                return BadRequest();
+            try
+            {
+                if (id < 0)
+                    return BadRequest();
 
-            var teacherSpokenLanguages = await _context.TeacherSpokenLanguages.SingleOrDefaultAsync(teacherSpokenLanguage => teacherSpokenLanguage.TeacherID == id);
+                var teacherSpokenLanguages = await _context.TeacherSpokenLanguages.SingleOrDefaultAsync(teacherSpokenLanguage => teacherSpokenLanguage.TeacherID == id);
 
-            if (teacherSpokenLanguages == null)
-                return NotFound();
+                if (teacherSpokenLanguages == null)
+                    return NotFound();
 
-            return Json(Ok(teacherSpokenLanguages));
+                return Json(Ok(teacherSpokenLanguages));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         #endregion
@@ -133,24 +167,24 @@ namespace Catalog.Controllers
 
         #region Delete
         [HttpDelete]
-        [Route("[action]")]
+        [Route("teachers")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteTeacher(int id)
         {
-            var teacher = _context.Teachers.SingleOrDefault(t => t.Id == id);
-
-            if (teacher == null)
-                return NotFound();
-
-            _context.Teachers.Remove(teacher);
-
             try
             {
-                await _context.SaveChangesAsync();
+                var teacher = _context.Teachers.SingleOrDefault(t => t.Id == id);
+
+                if (teacher == null)
+                    return NotFound();
+
+                _context.Teachers.Remove(teacher);
+
+                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
 
             return NoContent();
