@@ -25,6 +25,7 @@ namespace General
 
             services.AddMvc();
 
+            //Setup Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "General API", Version = "v1" });//TODO: Dynamically get version
@@ -53,14 +54,13 @@ namespace General
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            #region Swagger
+            //Setup Swagger
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My General V1");//TODO: Dynamically get version
             });
-            #endregion
         }
     }
 }

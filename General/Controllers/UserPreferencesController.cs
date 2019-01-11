@@ -106,11 +106,16 @@ namespace General.Controllers
                 return BadRequest(ModelState);
             try
             {
-                if (!UserPreferencesExists(id))
+                UserPreferences oldUserPreferences = await _context.UserPreference.FirstOrDefaultAsync(e => e.UserID == id);
+
+                if (oldUserPreferences == null)
                     return NotFound();
 
                 if (id != userPreferences.UserID)
                     return BadRequest();
+
+                oldUserPreferences.SystemLanguange = userPreferences.SystemLanguange;
+                oldUserPreferences.Currency = userPreferences.Currency;
             
                 _context.Entry(userPreferences).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -126,7 +131,10 @@ namespace General.Controllers
 
         #region Delete
         // DELETE: api/UserPreferences/5
+        [HttpDelete]
         [Route("users/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UserPreferences), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteUserPreferences([FromRoute] int id)
         {
             if (!ModelState.IsValid)

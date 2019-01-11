@@ -31,6 +31,7 @@ namespace Meeting
 
             services.AddMvc();
 
+            //Setup Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My Meeting", Version = "v1" });//TODO: Get version dynamically
@@ -59,14 +60,13 @@ namespace Meeting
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            #region
+            //Setup Swagger
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Meeting V1");//TODO: Get version dynamically
             });
-            #endregion
         }
     }
 }

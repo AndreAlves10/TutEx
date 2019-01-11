@@ -25,6 +25,7 @@ namespace Messaging
 
             services.AddMvc();
 
+            //Setup Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My Messaging", Version = "v1" });//TODO: Dynamically get version
@@ -53,14 +54,13 @@ namespace Messaging
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            #region Swagger
+            //Setup Swagger
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Messaging V1");//TODO: Dynamically get version
             });
-            #endregion
         }
     }
 }

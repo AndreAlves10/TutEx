@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Meeting.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Meeting")]
+    [Route("api/Meetings")]
     public class MeetingController : Controller
     {
         private readonly MeetingContext _context;

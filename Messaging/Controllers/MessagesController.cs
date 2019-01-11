@@ -20,9 +20,34 @@ namespace Messaging.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        #region Create
+        // POST: api/Messages
+        [HttpPost]
+        [Route("message")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> PostMessage([FromBody] Message message)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                _context.Messages.Add(message);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        #endregion
+
+        #region Read
         // GET: api/Messages
         [HttpGet]
-        [Route("messages")]
+        [Route("message")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMessages()
@@ -44,7 +69,7 @@ namespace Messaging.Controllers
 
         // GET: api/Messages/5
         [HttpGet]
-        [Route("messages/{id}")]
+        [Route("message/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMessage([FromRoute] int id)
@@ -67,9 +92,13 @@ namespace Messaging.Controllers
             }
             
         }
+        #endregion
 
+        #region Update
         // PUT: api/Messages/5
-        [HttpPut("message/{id}")]
+        [HttpPut]
+        [Route("message/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> PutMessage([FromRoute] int id, [FromBody] Message message)
         {
             if (!ModelState.IsValid)
@@ -77,11 +106,16 @@ namespace Messaging.Controllers
 
             try
             {
-                if (!MessageExists(id))
+                Message oldMessage = await _context.Messages.FirstOrDefaultAsync(n => n.Id == id);
+                
+                if (oldMessage == null)
                     return NotFound();
 
                 if (id != message.Id)
                     return BadRequest();
+
+                oldMessage.Content = message.Content;
+                oldMessage.SeenByUserTo = false;
             
                 _context.Entry(message).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -93,29 +127,9 @@ namespace Messaging.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        #endregion
 
-        // POST: api/Messages
-        [HttpPost]
-        [Route("message")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> PostMessage([FromBody] Message message)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                _context.Messages.Add(message);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction("GetMessage", new { id = message.Id }, message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
+        #region Delete
         // DELETE: api/Messages/5
         [HttpDelete]
         [Route("message/{id}")]
@@ -137,15 +151,11 @@ namespace Messaging.Controllers
 
                 return Json(Ok(message));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
-
-        private bool MessageExists(int id)
-        {
-            return _context.Messages.Any(e => e.Id == id);
-        }
+        #endregion
     }
 }
