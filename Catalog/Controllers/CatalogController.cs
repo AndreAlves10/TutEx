@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http.Cors;
 using Catalog.Data;
 using Catalog.Logging;
 using Catalog.Models;
@@ -173,7 +171,7 @@ namespace Catalog.Controllers
         {
             try
             {
-                var teacher = _context.Teachers.SingleOrDefault(t => t.Id == id);
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
 
                 if (teacher == null)
                     return NotFound();
