@@ -5,6 +5,8 @@ using Messaging.Data;
 using Messaging.Models;
 using System.Net;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Messaging.Controllers
 {
@@ -89,12 +91,33 @@ namespace Messaging.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+        }
+
+        [HttpGet]
+        [Route("message/user/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMessageByUserID([FromRoute] int id)
+        {
+            try
+            {
+                List<Message> messages = await _context.Messages.Where(m => m.UserIDFrom == id).ToListAsync();
+
+                if (messages == null)
+                    return NotFound();
+
+
+                return Json(Ok(messages));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         #endregion
 
-        #region Update
-        // PUT: api/Messages/5
+            #region Update
+            // PUT: api/Messages/5
         [HttpPut]
         [Route("message/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
