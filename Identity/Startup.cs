@@ -27,6 +27,16 @@ namespace Identity
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Allow Cors Calls
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")//Allow specific origin (AllowAnyOrigin() for all)
+                                      .AllowAnyMethod()//Allow all HTTP verbs
+                                      .AllowAnyHeader());//Allow all headers
+            });
+
+            //DB Connection String
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -91,6 +101,9 @@ namespace Identity
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            // Shows UseCors with named policy.
+            app.UseCors("CorsPolicy");
 
             app.UseStaticFiles();
 

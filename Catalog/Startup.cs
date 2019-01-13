@@ -23,10 +23,13 @@ namespace Catalog
             //Allow Cors Calls
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("http://localhost:4200"));
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")//Allow specific origin (AllowAnyOrigin() for all)
+                                      .AllowAnyMethod()//Allow all HTTP verbs
+                                      .AllowAnyHeader());//Allow all headers
             });
 
+            //DB Connection String
             services.AddDbContext<CatalogContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -53,7 +56,7 @@ namespace Catalog
             }
 
             // Shows UseCors with named policy.
-            app.UseCors("AllowSpecificOrigin");
+            app.UseCors("CorsPolicy");
 
             app.UseStaticFiles();
 
