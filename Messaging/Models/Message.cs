@@ -11,6 +11,9 @@ namespace Messaging.Models
         public int UserIDFrom { get; set; }
         public int UserIDTo { get; set; }
 
+        public string NameUserFrom { get; set; }
+        public string NameUserTo { get; set; }
+
         public string Content { get; set; }
         public DateTime MessageUTCCreatedDate { get; set; }
         public bool SeenByUserTo { get; set; }

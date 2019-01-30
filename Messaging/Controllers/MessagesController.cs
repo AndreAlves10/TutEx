@@ -94,18 +94,44 @@ namespace Messaging.Controllers
         }
 
         [HttpGet]
-        [Route("message/user/{id}")]
+        [Route("message/chatlist/{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetMessageByUserID([FromRoute] int id)
+        public async Task<IActionResult> GetChatList([FromRoute] int id)
         {
             try
             {
-                List<Message> messages = await _context.Messages.Where(m => m.UserIDFrom == id).ToListAsync();
+                var listOfUsers = await _context.Messages.Where(m => m.UserIDFrom == id)
+                    .Select(m => new { m.UserIDTo, m.NameUserTo })
+                    .Distinct()
+                    .ToListAsync();
+
+                if (listOfUsers == null)
+                    return NotFound();
+
+                return Json(Ok(listOfUsers));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("message/user/{idFrom}/{idTo}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Message), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMessageByUserID([FromRoute] int idFrom, [FromRoute] int idTo)
+        {
+            try
+            {
+                List <Message> messages = await _context.Messages.Where(
+                    m => (m.UserIDFrom == idFrom && m.UserIDTo == idTo) || (m.UserIDTo == idFrom && m.UserIDFrom == idTo))
+                    .OrderBy(m => m.MessageUTCCreatedDate)
+                    .ToListAsync();
 
                 if (messages == null)
                     return NotFound();
-
 
                 return Json(Ok(messages));
             }
@@ -116,7 +142,7 @@ namespace Messaging.Controllers
         }
         #endregion
 
-            #region Update
+        #region Update
             // PUT: api/Messages/5
         [HttpPut]
         [Route("message/{id}")]
